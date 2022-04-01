@@ -37,7 +37,7 @@ class HeroListViewController: UIViewController {
         return indicator
     }()
     
-    lazy var heroListTableView: UICollectionView = {
+    lazy var heroListCollectionView: UICollectionView = {
         let collectionView = UICollectionView()
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -76,7 +76,9 @@ class HeroListViewController: UIViewController {
     // MARK: - Private View State Methods
     
     private func onLoadingState() {
-        
+        heroListCollectionView.isHidden = true
+        loadingIndicator.isHidden = false
+        loadingIndicator.startAnimating()
     }
     
     private func onNormalState() {
@@ -86,15 +88,32 @@ class HeroListViewController: UIViewController {
     private func onErrorState() {
         
     }
+    
+    // MARK: - Private Layout Methods
+    
+    private func setupLayouts() {
+        setupLoadingIndicatorLayout()
+    }
+    
+    private func setupLoadingIndicatorLayout() {
+        view.addSubview(loadingIndicator)
+        
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            loadingIndicator.heightAnchor.constraint(equalToConstant: 100),
+            loadingIndicator.widthAnchor.constraint(equalToConstant: 100)
+        ])
+    }
 }
 
 extension HeroListViewController: HeroListViewModelDelegate {
     func heroFetchWithSucess() {
-        <#code#>
+        
     }
     
     func errorToFetchHero(_ error: String) {
-        <#code#>
+        
     }
     
     
