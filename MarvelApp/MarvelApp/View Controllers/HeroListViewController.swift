@@ -47,12 +47,13 @@ class HeroListViewController: UIViewController {
         let collectionLayout = UICollectionViewFlowLayout()
         collectionLayout.scrollDirection = .horizontal
         
-        let itemHeight = view.frame.height * 0.7
+        let itemHeight = view.frame.height * 0.8
         collectionLayout.itemSize = CGSize(width: itemHeight * 0.6, height: itemHeight)
         
         /// Init Collection View
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .clear
         
         /// Register Collection View Cell
         collectionView.register(HeroCollectionViewCell.self, forCellWithReuseIdentifier: HeroCollectionViewCell.identifier)
@@ -75,6 +76,8 @@ class HeroListViewController: UIViewController {
         heroListCollectionView.dataSource = self
         
         title = "Heróis da Marvel"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
         state = .loading
         
@@ -165,7 +168,7 @@ extension HeroListViewController: HeroListViewModelDelegate {
     }
     
     func errorToFetchHero(_ error: String) {
-        <#code#>
+        
     }
 }
 

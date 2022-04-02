@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class HeroCollectionViewCell: UICollectionViewCell {
     
@@ -18,22 +19,24 @@ class HeroCollectionViewCell: UICollectionViewCell {
     lazy var heroImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
         return imageView
     }()
     
     lazy var heroNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.textAlignment = .center
-        label.textColor = .white
+        label.textColor = .black
+        label.numberOfLines = 0
         return label
     }()
     
     lazy var heroNameBackground: UIView = {
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
-        background.gradientBackground(colorOne: .clear, colorTwo: .black)
+        background.backgroundColor = .white
         return background
     }()
     
@@ -45,15 +48,29 @@ class HeroCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupInformation(hero: Hero) {
-        heroImageView.image = UIImage(systemName: "star")
         heroNameLabel.text = hero.name
+        
+        if let heroThumbnail = hero.thumbnail,
+           let heroThumbnailPath = heroThumbnail.path,
+           let heroThumbnailExtension = heroThumbnail.thumbnailExtension {
+            
+            var heroThumbnailPathUpdated = heroThumbnailPath.replacingOccurrences(of: "http", with: "https")
+            heroThumbnailPathUpdated = "\(heroThumbnailPathUpdated).\(heroThumbnailExtension)"
+            
+            if let url = URL(string: heroThumbnailPathUpdated) {
+                heroImageView.kf.setImage(with: url)
+            }
+        }
+        else {
+            heroImageView.backgroundColor = UIColor.gray
+        }
     }
     
     // MARK: - Layout Setup Methods
     
     private func setupLayouts() {
-        setupHeroImageLayout()
         setupNameBackgroundLayout()
+        setupHeroImageLayout()
         setupHeroNameLabelLayout()
     }
     
@@ -64,7 +81,7 @@ class HeroCollectionViewCell: UICollectionViewCell {
             heroImageView.topAnchor.constraint(equalTo: self.topAnchor),
             heroImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             heroImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            heroImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            heroImageView.bottomAnchor.constraint(equalTo: heroNameBackground.topAnchor)
         ])
     }
     
@@ -75,7 +92,7 @@ class HeroCollectionViewCell: UICollectionViewCell {
             heroNameBackground.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             heroNameBackground.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             heroNameBackground.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            heroNameBackground.heightAnchor.constraint(equalToConstant: frame.height * 0.4)
+            heroNameBackground.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     
@@ -84,8 +101,8 @@ class HeroCollectionViewCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             heroNameLabel.topAnchor.constraint(equalTo: heroNameBackground.topAnchor),
-            heroNameLabel.leadingAnchor.constraint(equalTo: heroNameBackground.leadingAnchor),
-            heroNameLabel.trailingAnchor.constraint(equalTo: heroNameBackground.trailingAnchor),
+            heroNameLabel.leadingAnchor.constraint(equalTo: heroNameBackground.leadingAnchor, constant: 20),
+            heroNameLabel.trailingAnchor.constraint(equalTo: heroNameBackground.trailingAnchor, constant: -20),
             heroNameLabel.bottomAnchor.constraint(equalTo: heroNameBackground.bottomAnchor)
         ])
     }
