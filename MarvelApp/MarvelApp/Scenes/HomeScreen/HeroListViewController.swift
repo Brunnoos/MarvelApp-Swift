@@ -48,15 +48,17 @@ class HeroListViewController: UIViewController {
         collectionLayout.scrollDirection = .horizontal
         
         let itemHeight = view.frame.height * 0.8
-        collectionLayout.itemSize = CGSize(width: itemHeight * 0.6, height: itemHeight)
+        let itemWidth = view.frame.width * 0.8
+        collectionLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         
         /// Init Collection View
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
         
-        /// Register Collection View Cell
+        /// Register Collection View Cells
         collectionView.register(HeroCollectionViewCell.self, forCellWithReuseIdentifier: HeroCollectionViewCell.identifier)
+        collectionView.register(LoadMoreCollectionViewCell.self, forCellWithReuseIdentifier: LoadMoreCollectionViewCell.identifier)
         
         collectionView.collectionViewLayout = collectionLayout
         return collectionView
@@ -92,8 +94,7 @@ class HeroListViewController: UIViewController {
         heroListCollectionView.dataSource = self
         
         title = "Heróis da Marvel"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
         state = .loading
         
@@ -115,6 +116,20 @@ class HeroListViewController: UIViewController {
     
     private func fetchHeroes() {
         viewModel?.fetchHeroes()
+    }
+    
+    private func fetchMoreHeroes() {
+        viewModel?.fetchHeroes(listOffset: 30)
+    }
+    
+    private func openHeroDetailsScreen(heroID: Int, heroName: String) {
+        let service = HeroService()
+        let viewModel = HeroDetailViewModel(heroID: heroID, service: service)
+        let heroDetailViewController = HeroDetailViewController()
+        
+        heroDetailViewController.viewModel = viewModel
+        
+        navigationController?.pushViewController(heroDetailViewController, animated: true)
     }
     
     // MARK: - Private View State Methods
@@ -202,11 +217,18 @@ class HeroListViewController: UIViewController {
     }
 }
 
-extension HeroListViewController: HeroListViewModelDelegate {
-    func heroFetchWithSucess() {
+extension HeroListViewController: HeroViewModelDelegate {
+    func heroFetchWithSucess(isAdditional: Bool) {
         if let viewModel = viewModel,
            let heroesList = viewModel.getHeroesList() {
-            self.heroesList = heroesList
+            
+            if isAdditional, var selfHeroesList = self.heroesList {
+                selfHeroesList.append(contentsOf: heroesList)
+                self.heroesList = selfHeroesList
+            }
+            else {
+                self.heroesList = heroesList
+            }
         }
         
         self.state = .normal
@@ -222,10 +244,31 @@ extension HeroListViewController: HeroListViewModelDelegate {
 
 extension HeroListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: view.frame.width * 0.10, bottom: 0, right: view.frame.width * 0.10)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let heroesList = heroesList {
+            /// Check if Selected Row is a Hero Cell
+            if indexPath.row < heroesList.count {
+                if let heroName = heroesList[indexPath.row].name,
+                   let heroID = heroesList[indexPath.row].id {
+                    openHeroDetailsScreen(heroID: heroID, heroName: heroName)
+                }
+            } else {
+                guard let loadMoreCell = collectionView.cellForItem(at: indexPath) as? LoadMoreCollectionViewCell else { return }
+                
+                loadMoreCell.startLoadingIndicator()
+                fetchMoreHeroes()
+            }
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if let heroesList = heroesList {
-            return heroesList.count
+            return heroesList.count + 1
         } else {
             return 0
         }
@@ -233,14 +276,25 @@ extension HeroListViewController: UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCollectionViewCell.identifier, for: indexPath) as? HeroCollectionViewCell else { return UICollectionViewCell() }
-        
         if let heroesList = heroesList {
-            let hero = heroesList[indexPath.row]
-            cell.setupCell(hero: hero)
+            
+            if indexPath.row < heroesList.count {
+                guard let heroCell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCollectionViewCell.identifier, for: indexPath) as? HeroCollectionViewCell else { return UICollectionViewCell() }
+                
+                let hero = heroesList[indexPath.row]
+                heroCell.setupCell(hero: hero)
+                
+                return heroCell
+            } else {
+                guard let loadMoreCell = collectionView.dequeueReusableCell(withReuseIdentifier: LoadMoreCollectionViewCell.identifier, for: indexPath) as? LoadMoreCollectionViewCell else { return UICollectionViewCell() }
+                
+                loadMoreCell.stopLoadingIndicator()
+                
+                return loadMoreCell
+            }
         }
-        
-        return cell
-        
+        else {
+            return UICollectionViewCell()
+        }
     }
 }

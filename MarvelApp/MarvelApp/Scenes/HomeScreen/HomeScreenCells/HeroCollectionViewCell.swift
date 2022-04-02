@@ -20,6 +20,7 @@ class HeroCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -40,6 +41,16 @@ class HeroCollectionViewCell: UICollectionViewCell {
         return background
     }()
     
+    lazy var heroImageLoadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.isHidden = true
+        indicator.style = .medium
+        indicator.color = .white
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+    
     // MARK: - Setup Methods
     
     func setupCell(hero: Hero) {
@@ -58,7 +69,12 @@ class HeroCollectionViewCell: UICollectionViewCell {
             heroThumbnailPathUpdated = "\(heroThumbnailPathUpdated).\(heroThumbnailExtension)"
             
             if let url = URL(string: heroThumbnailPathUpdated) {
-                heroImageView.kf.setImage(with: url)
+                heroImageLoadingIndicator.startAnimating()
+                heroImageView.kf.setImage(with: url) { _ in
+                    DispatchQueue.main.async {
+                        self.heroImageLoadingIndicator.stopAnimating()
+                    }
+                }
             }
         }
         else {
@@ -72,6 +88,7 @@ class HeroCollectionViewCell: UICollectionViewCell {
         setupNameBackgroundLayout()
         setupHeroImageLayout()
         setupHeroNameLabelLayout()
+        setupLoadingIndicatorLayout()
     }
     
     private func setupHeroImageLayout() {
@@ -104,6 +121,17 @@ class HeroCollectionViewCell: UICollectionViewCell {
             heroNameLabel.leadingAnchor.constraint(equalTo: heroNameBackground.leadingAnchor, constant: 20),
             heroNameLabel.trailingAnchor.constraint(equalTo: heroNameBackground.trailingAnchor, constant: -20),
             heroNameLabel.bottomAnchor.constraint(equalTo: heroNameBackground.bottomAnchor)
+        ])
+    }
+    
+    private func setupLoadingIndicatorLayout() {
+        addSubview(heroImageLoadingIndicator)
+        
+        NSLayoutConstraint.activate([
+            heroImageLoadingIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            heroImageLoadingIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            heroImageLoadingIndicator.heightAnchor.constraint(equalToConstant: 40),
+            heroImageLoadingIndicator.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
 }

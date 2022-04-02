@@ -7,9 +7,9 @@
 
 import Foundation
 
-protocol HeroListViewModelDelegate: AnyObject {
+protocol HeroViewModelDelegate: AnyObject {
     
-    func heroFetchWithSucess()
+    func heroFetchWithSucess(isAdditional: Bool)
     func errorToFetchHero(_ error: String)
     
 }
