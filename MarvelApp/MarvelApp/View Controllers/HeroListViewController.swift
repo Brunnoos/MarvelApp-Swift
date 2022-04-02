@@ -62,6 +62,23 @@ class HeroListViewController: UIViewController {
         return collectionView
     }()
     
+    lazy var errorImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "exclamationmark.icloud")
+        return imageView
+    }()
+    
+    lazy var errorTextLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+    
     // MARK: - View Controller Methods
     
     override func viewDidLoad() {
@@ -70,7 +87,6 @@ class HeroListViewController: UIViewController {
         view.backgroundColor = .black
         viewModel?.delegate = self
         setupLayouts()
-        registerCellNib()
         
         heroListCollectionView.delegate = self
         heroListCollectionView.dataSource = self
@@ -101,15 +117,13 @@ class HeroListViewController: UIViewController {
         viewModel?.fetchHeroes()
     }
     
-    private func registerCellNib() {
-        
-    }
-    
     // MARK: - Private View State Methods
     
     private func onLoadingState() {
         DispatchQueue.main.async {
             self.heroListCollectionView.isHidden = true
+            self.errorImageView.isHidden = true
+            self.errorTextLabel.isHidden = true
             self.loadingIndicator.isHidden = false
             self.loadingIndicator.startAnimating()
         }
@@ -118,13 +132,20 @@ class HeroListViewController: UIViewController {
     private func onNormalState() {
         DispatchQueue.main.async {
             self.loadingIndicator.stopAnimating()
+            self.errorImageView.isHidden = true
+            self.errorTextLabel.isHidden = true
             self.heroListCollectionView.isHidden = false
             self.heroListCollectionView.reloadData()
         }
     }
     
     private func onErrorState() {
-        
+        DispatchQueue.main.async {
+            self.loadingIndicator.stopAnimating()
+            self.heroListCollectionView.isHidden = true
+            self.errorImageView.isHidden = false
+            self.errorTextLabel.isHidden = false
+        }
     }
     
     // MARK: - Private Layout Methods
@@ -132,6 +153,8 @@ class HeroListViewController: UIViewController {
     private func setupLayouts() {
         setupLoadingIndicatorLayout()
         setupHeroListLayout()
+        setupErrorImageLayout()
+        setupErrorTextLayout()
     }
     
     private func setupLoadingIndicatorLayout() {
@@ -155,6 +178,28 @@ class HeroListViewController: UIViewController {
             heroListCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    private func setupErrorImageLayout() {
+        view.addSubview(errorImageView)
+        
+        NSLayoutConstraint.activate([
+            errorImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            errorImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            errorImageView.heightAnchor.constraint(equalToConstant: 48),
+            errorImageView.widthAnchor.constraint(equalToConstant: 48)
+        ])
+    }
+    
+    private func setupErrorTextLayout() {
+        view.addSubview(errorTextLabel)
+        
+        NSLayoutConstraint.activate([
+            errorTextLabel.topAnchor.constraint(equalTo: errorImageView.bottomAnchor, constant: 4),
+            errorTextLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            errorTextLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            errorTextLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        ])
+    }
 }
 
 extension HeroListViewController: HeroListViewModelDelegate {
@@ -168,7 +213,10 @@ extension HeroListViewController: HeroListViewModelDelegate {
     }
     
     func errorToFetchHero(_ error: String) {
-        
+        DispatchQueue.main.async {
+            self.errorTextLabel.text = error
+        }
+        self.state = .error
     }
 }
 

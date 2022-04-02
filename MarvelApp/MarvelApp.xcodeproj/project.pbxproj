@@ -80,7 +80,6 @@
 				37770BD7D74C4D9703D017DF /* Pods-MarvelApp.debug.xcconfig */,
 				3E2E795CC238995F3FF942D9 /* Pods-MarvelApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
