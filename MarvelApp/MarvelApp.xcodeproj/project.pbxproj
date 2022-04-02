@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		9993F08B27F7AB7100AE5DBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9993F08A27F7AB7100AE5DBB /* AppDelegate.swift */; };
 		9993F08D27F7AB7100AE5DBB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9993F08C27F7AB7100AE5DBB /* SceneDelegate.swift */; };
-		9993F08F27F7AB7100AE5DBB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9993F08E27F7AB7100AE5DBB /* ViewController.swift */; };
 		9993F09427F7AB7300AE5DBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9993F09327F7AB7300AE5DBB /* Assets.xcassets */; };
 		9993F09727F7AB7300AE5DBB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9993F09527F7AB7300AE5DBB /* LaunchScreen.storyboard */; };
 		9993F0A127F7AC7A00AE5DBB /* HeroesResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9993F0A027F7AC7A00AE5DBB /* HeroesResponseModel.swift */; };
@@ -32,7 +31,6 @@
 		9993F08727F7AB7100AE5DBB /* MarvelApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarvelApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9993F08A27F7AB7100AE5DBB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9993F08C27F7AB7100AE5DBB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9993F08E27F7AB7100AE5DBB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9993F09327F7AB7300AE5DBB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9993F09627F7AB7300AE5DBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9993F09827F7AB7300AE5DBB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 				9993F0A227F7AC9800AE5DBB /* Network */,
 				9993F09E27F7AC3B00AE5DBB /* Application */,
 				9993F0AE27F7AE3400AE5DBB /* Commons */,
-				9993F08E27F7AB7100AE5DBB /* ViewController.swift */,
 				9993F09327F7AB7300AE5DBB /* Assets.xcassets */,
 				9993F09527F7AB7300AE5DBB /* LaunchScreen.storyboard */,
 				9993F09827F7AB7300AE5DBB /* Info.plist */,
@@ -256,7 +253,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9993F08F27F7AB7100AE5DBB /* ViewController.swift in Sources */,
 				9993F0AD27F7AE1800AE5DBB /* Environment.swift in Sources */,
 				9993F0A127F7AC7A00AE5DBB /* HeroesResponseModel.swift in Sources */,
 				9993F0A927F7AD9800AE5DBB /* HTTPMethod.swift in Sources */,
