@@ -37,6 +37,16 @@ class HeroListViewModel {
         }
     }
     
+    func getHeroesList() -> [Hero]? {
+        if let heroes = heroes,
+           let heroesData = heroes.data {
+            return heroesData.results
+        }
+        else {
+            return nil
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func onSucess(heroResponse: HeroesResponse) {
