@@ -18,7 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         let service = HeroListService()
-        let viewModel = HeroListViewModel(service: service)
+        let searchService = HeroSearchListService()
+        let viewModel = HeroListViewModel(service: service, searchServices: searchService)
         let heroViewController = HeroListViewController()
         
         heroViewController.viewModel = viewModel

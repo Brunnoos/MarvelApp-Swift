@@ -1,24 +1,29 @@
 //
-//  HeroListService.swift
+//  HeroSearchListService.swift
 //  MarvelApp
 //
-//  Created by Aloc FL00030 on 01/04/22.
+//  Created by Aloc FL00030 on 05/04/22.
 //
 
 import Foundation
 
-class HeroListService: HeroListServiceProtocol {
+class HeroSearchListService: HeroSearchListServiceProtocol {
     
     let session = URLSession.shared
     
-    // MARK: - List Protocol Methods
+    // MARK: - List Search Protocol Methods
     
-    func execute(handler: @escaping (Result<HeroesResponse, HeroError>) -> Void) {
+    func execute(search: String, handler: @escaping (Result<HeroesResponse, HeroError>) -> Void) {
         let request: HomeRequest = .home
         
         if var baseURL = URLComponents(string: request.baseURL) {
             
-            baseURL.query = request.path
+            guard let searchEncoded = search.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+                handler(.failure(.error("Can't encode search string")))
+                return
+            }
+            
+            baseURL.query = "nameStartsWith=\(searchEncoded)&" + request.path
             
             guard let url = baseURL.url else { return }
             
@@ -36,6 +41,7 @@ class HeroListService: HeroListServiceProtocol {
                         let decoder = JSONDecoder()
                         
                         let responseData = try decoder.decode(HeroesResponse.self, from: jsonData)
+            
                         handler(.success(responseData))
                     } catch let error {
                         handler(.failure(.error(error.localizedDescription)))
@@ -50,12 +56,17 @@ class HeroListService: HeroListServiceProtocol {
         }
     }
     
-    func execute(listOffset: Int, handler: @escaping (Result<HeroesResponse, HeroError>) -> Void) {
+    func execute(search: String, listOffset: Int, handler: @escaping (Result<HeroesResponse, HeroError>) -> Void) {
         let request: HomeRequest = .home
         
         if var baseURL = URLComponents(string: request.baseURL) {
             
-            baseURL.query = "offset=\(listOffset)&" + request.path
+            guard let searchEncoded = search.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+                handler(.failure(.error("Can't encode search string")))
+                return
+            }
+            
+            baseURL.query = "offset=\(listOffset)&nameStartsWith=\(searchEncoded)&" + request.path
             
             guard let url = baseURL.url else { return }
             

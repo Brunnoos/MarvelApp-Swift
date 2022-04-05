@@ -26,7 +26,7 @@ class EventCollectionViewCell: UICollectionViewCell {
     lazy var eventNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = UIFont(name: "Adventure", size: 32)
         label.textAlignment = .center
         label.textColor = .black
         label.numberOfLines = 0
@@ -55,6 +55,7 @@ class EventCollectionViewCell: UICollectionViewCell {
     func setupCell(event: Event) {
         setupLayouts()
         setupInformation(event: event)
+        setupCellVisual()
     }
     
     private func setupInformation(event: Event) {
@@ -79,6 +80,11 @@ class EventCollectionViewCell: UICollectionViewCell {
         else {
             eventImageView.backgroundColor = UIColor.gray
         }
+    }
+    
+    private func setupCellVisual() {
+        layer.cornerRadius = 20
+        clipsToBounds = true
     }
     
     // MARK: - Layout Setup Methods

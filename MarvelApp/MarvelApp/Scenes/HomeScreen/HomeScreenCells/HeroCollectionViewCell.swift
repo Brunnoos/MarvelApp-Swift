@@ -27,7 +27,7 @@ class HeroCollectionViewCell: UICollectionViewCell {
     lazy var heroNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = UIFont(name: "Adventure", size: 36)
         label.textAlignment = .center
         label.textColor = .black
         label.numberOfLines = 0
@@ -56,8 +56,10 @@ class HeroCollectionViewCell: UICollectionViewCell {
     func setupCell(hero: Hero) {
         setupLayouts()
         setupInformation(hero: hero)
+        setupCellVisual()
     }
     
+    /// Uses Hero Information to feed cell and update its contents
     private func setupInformation(hero: Hero) {
         heroNameLabel.text = hero.name
         
@@ -80,6 +82,11 @@ class HeroCollectionViewCell: UICollectionViewCell {
         else {
             heroImageView.backgroundColor = UIColor.gray
         }
+    }
+    
+    private func setupCellVisual() {
+        layer.cornerRadius = 20
+        clipsToBounds = true
     }
     
     // MARK: - Layout Setup Methods

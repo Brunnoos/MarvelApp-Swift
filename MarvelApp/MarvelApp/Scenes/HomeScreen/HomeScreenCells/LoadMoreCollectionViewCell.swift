@@ -53,6 +53,7 @@ class LoadMoreCollectionViewCell: UICollectionViewCell {
         imageView.isHidden = false
         textLabel.isHidden = false
         setupLayouts()
+        setupCellVisual()
     }
     
     init() {
@@ -82,6 +83,13 @@ class LoadMoreCollectionViewCell: UICollectionViewCell {
             self.loadingIndicator.isHidden = true
             self.loadingIndicator.stopAnimating()
         }
+    }
+    
+    // MARK: - Private Setup Methods
+    
+    private func setupCellVisual() {
+        layer.cornerRadius = 20
+        clipsToBounds = true
     }
     
     // MARK: - Layout Setup Methods

@@ -22,6 +22,14 @@ protocol HeroListServiceProtocol: AnyObject {
     
 }
 
+protocol HeroSearchListServiceProtocol {
+    
+    func execute(search: String, handler: @escaping(Result<HeroesResponse, HeroError>) -> Void)
+    
+    func execute(search: String, listOffset: Int, handler: @escaping(Result<HeroesResponse, HeroError>) -> Void)
+    
+}
+
 protocol HeroServiceProtocol: AnyObject {
     func execute(heroID: Int, handler: @escaping(Result<HeroesResponse, HeroError>) -> Void)
 }

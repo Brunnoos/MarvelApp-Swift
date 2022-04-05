@@ -26,6 +26,7 @@ class HeroListViewController: UIViewController {
     // MARK: - Private Properties
     
     private var heroesList: [Hero]?
+    private var searchText: String?
     
     // MARK: - Public Properties
     
@@ -47,7 +48,7 @@ class HeroListViewController: UIViewController {
         let collectionLayout = UICollectionViewFlowLayout()
         collectionLayout.scrollDirection = .horizontal
         
-        let itemHeight = view.frame.height * 0.8
+        let itemHeight = view.frame.height * 0.7
         let itemWidth = view.frame.width * 0.8
         collectionLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         
@@ -81,6 +82,11 @@ class HeroListViewController: UIViewController {
         return label
     }()
     
+    lazy var searchViewController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        return controller
+    }()
+    
     // MARK: - View Controller Methods
     
     override func viewDidLoad() {
@@ -89,16 +95,18 @@ class HeroListViewController: UIViewController {
         view.backgroundColor = .black
         viewModel?.delegate = self
         setupLayouts()
+        setupSearchController()
         
         heroListCollectionView.delegate = self
         heroListCollectionView.dataSource = self
         
-        title = "Heróis da Marvel"
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
         state = .loading
         
-        fetchHeroes()
+        fetchSearchHeroes()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        setupNavigationController()
     }
     
     // MARK: - Private Setup Methods
@@ -114,12 +122,13 @@ class HeroListViewController: UIViewController {
         }
     }
     
-    private func fetchHeroes() {
-        viewModel?.fetchHeroes()
+    private func fetchSearchHeroes() {
+        state = .loading
+        viewModel?.fetchHeroesSearch(search: searchText)
     }
     
-    private func fetchMoreHeroes() {
-        viewModel?.fetchHeroes(listOffset: 30)
+    private func fetchMoreSearchHeroes() {
+        viewModel?.fetchHeroesSearch(search: searchText, listOffset: 30)
     }
     
     private func openHeroDetailsScreen(heroID: Int, heroName: String) {
@@ -161,6 +170,34 @@ class HeroListViewController: UIViewController {
             self.errorImageView.isHidden = false
             self.errorTextLabel.isHidden = false
         }
+    }
+    
+    // MARK: - Private Search Bar Setup Methods
+    
+    private func setupNavigationController() {
+        title = "Heróis da Marvel"
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationItem.searchController = searchViewController
+        navigationItem.hidesSearchBarWhenScrolling = true
+        self.definesPresentationContext = true
+    }
+    
+    private func setupSearchController() {
+        searchViewController.searchBar.autocapitalizationType = .none
+        searchViewController.searchBar.autocorrectionType = .no
+        searchViewController.hidesNavigationBarDuringPresentation = false
+        searchViewController.automaticallyShowsCancelButton = false
+        
+        searchViewController.searchResultsUpdater = self
+        searchViewController.delegate = self
+        searchViewController.searchBar.delegate = self
+        
+        searchViewController.searchBar.clearsContextBeforeDrawing = false
+        
+        searchViewController.searchBar.sizeToFit()
+        searchViewController.searchBar.placeholder = "Pesquisa"
+        searchViewController.searchBar.barStyle = .black
     }
     
     // MARK: - Private Layout Methods
@@ -242,6 +279,8 @@ extension HeroListViewController: HeroViewModelDelegate {
     }
 }
 
+// MARK: - Collection View Protocols
+
 extension HeroListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -260,7 +299,7 @@ extension HeroListViewController: UICollectionViewDataSource, UICollectionViewDe
                 guard let loadMoreCell = collectionView.cellForItem(at: indexPath) as? LoadMoreCollectionViewCell else { return }
                 
                 loadMoreCell.startLoadingIndicator()
-                fetchMoreHeroes()
+                fetchMoreSearchHeroes()
             }
         }
     }
@@ -296,5 +335,38 @@ extension HeroListViewController: UICollectionViewDataSource, UICollectionViewDe
         else {
             return UICollectionViewCell()
         }
+    }
+}
+
+// MARK: - Search Controller Protocols
+
+extension HeroListViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        DispatchQueue.main.async {
+            searchBar.setShowsCancelButton(true, animated: true)
+        }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let searchBarText = searchBar.text {
+            searchText = searchBarText
+            fetchSearchHeroes()
+            
+            searchBar.endEditing(true)
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText = nil
+        fetchSearchHeroes()
+        
+        DispatchQueue.main.async {
+            searchBar.setShowsCancelButton(false, animated: true)
+        }
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        
     }
 }

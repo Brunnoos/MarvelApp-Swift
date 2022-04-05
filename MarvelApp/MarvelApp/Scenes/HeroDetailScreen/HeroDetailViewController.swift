@@ -43,17 +43,17 @@ class HeroDetailViewController: UIViewController {
     lazy var heroImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 100
+        imageView.layer.cornerRadius = 20
         return imageView
     }()
     
     lazy var heroNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 1
-        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.numberOfLines = 0
+        label.font = UIFont(name: "Adventure", size: 48)
         label.textColor = .white
         label.textAlignment = .center
         return label
@@ -85,6 +85,7 @@ class HeroDetailViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 14)
         label.textAlignment = .center
         label.textColor = .white
+        label.text = "Nenhum Evento encontrado"
         return label
     }()
     
@@ -156,9 +157,9 @@ class HeroDetailViewController: UIViewController {
         let heroEventsViewController = HeroEventsViewController()
         
         heroEventsViewController.viewModel = viewModel
-        heroEventsViewController.title = "Eventos de \(heroName)"
+        heroEventsViewController.viewTitle.text = "Eventos de \(heroName)"
         
-        navigationController?.pushViewController(heroEventsViewController, animated: true)
+        navigationController?.present(heroEventsViewController, animated: true)
     }
     
     // MARK: - Private View State Methods
@@ -245,8 +246,9 @@ class HeroDetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             heroImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             heroImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            heroImageView.heightAnchor.constraint(equalToConstant: 200),
-            heroImageView.widthAnchor.constraint(equalToConstant: 200)
+            heroImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            heroImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            heroImageView.heightAnchor.constraint(equalTo: heroImageView.widthAnchor, multiplier: 0.6)
         ])
     }
     
@@ -255,8 +257,8 @@ class HeroDetailViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             heroNameLabel.topAnchor.constraint(equalTo: heroImageView.bottomAnchor, constant: 8),
-            heroNameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            heroNameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
+            heroNameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            heroNameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
     }
     
@@ -265,8 +267,8 @@ class HeroDetailViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             heroDescriptionLabel.topAnchor.constraint(equalTo: heroNameLabel.bottomAnchor, constant: 16),
-            heroDescriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            heroDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
+            heroDescriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            heroDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
     }
     
@@ -276,8 +278,8 @@ class HeroDetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             openEventsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
             openEventsButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            openEventsButton.heightAnchor.constraint(equalToConstant: 30),
-            openEventsButton.widthAnchor.constraint(equalToConstant: 120)
+            openEventsButton.heightAnchor.constraint(equalToConstant: 40),
+            openEventsButton.widthAnchor.constraint(equalToConstant: 150)
         ])
     }
     
@@ -286,9 +288,9 @@ class HeroDetailViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             noEventsTextLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
-            noEventsTextLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             noEventsTextLabel.heightAnchor.constraint(equalToConstant: 30),
-            noEventsTextLabel.widthAnchor.constraint(equalToConstant: 120)
+            noEventsTextLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            noEventsTextLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
     }
     

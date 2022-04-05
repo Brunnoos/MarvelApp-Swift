@@ -11,6 +11,7 @@ class HeroListViewModel {
     
     // MARK: - Private Properties
     private var services: HeroListServiceProtocol
+    private var searchServices: HeroSearchListServiceProtocol
     private var heroesLoaded: Int = 0
     
     // MARK: - Optional Properties
@@ -19,34 +20,76 @@ class HeroListViewModel {
     
     // MARK: - Initialization
     
-    init(service: HeroListServiceProtocol) {
+    init(service: HeroListServiceProtocol, searchServices: HeroSearchListServiceProtocol) {
         services = service
+        self.searchServices = searchServices
     }
     
     // MARK: - Public Methods
     
-    func fetchHeroes(listOffset: Int = 0) {
+    func fetchHeroes(listOffset: Int = 0, isStartsWith: Bool = false) {
         
         if listOffset > 0 {
             services.execute(listOffset: heroesLoaded + listOffset) { result in
                 switch result {
                 case .success(let response):
                     self.heroesLoaded += (response.data?.count ?? 0)
+                    self.heroes = response
                     self.onSucess(heroResponse: response, isAdditional: true)
                 case .failure(let error):
                     self.onFailure(error: error)
                 }
             }
         } else {
+            heroesLoaded = 0
             services.execute() { result in
                 switch result {
                 case .success(let response):
                     self.heroesLoaded += (response.data?.count ?? 0)
+                    self.heroes = response
                     self.onSucess(heroResponse: response)
                 case .failure(let error):
                     self.onFailure(error: error)
                 }
             }
+        }
+        
+    }
+    
+    func fetchHeroesSearch(search: String?, listOffset: Int = 0) {
+        
+        if let search = search {
+            if listOffset > 0 {
+                let currentOffset = heroesLoaded + listOffset
+                searchServices.execute(search: search, listOffset: currentOffset) { result in
+                    
+                    switch result {
+                    case .success(let response):
+                        self.heroesLoaded += (response.data?.count ?? 0)
+                        self.heroes = response
+                        self.onSucess(heroResponse: response, isAdditional: true)
+                        
+                    case .failure(let error):
+                        self.onFailure(error: error)
+                    }
+                }
+            } else {
+                searchServices.execute(search: search) { result in
+                    switch result {
+                    case .success(let response):
+                        self.heroesLoaded = (response.data?.count ?? 0)
+                        self.heroes = response
+                        self.onSucess(heroResponse: response)
+                        
+                    case .failure(let error):
+                        self.onFailure(error: error)
+                    }
+                }
+            }
+        }
+        /// If no search term is provided, make a default fetch
+        else {
+            fetchHeroes(listOffset: listOffset)
         }
         
     }
@@ -64,7 +107,6 @@ class HeroListViewModel {
     // MARK: - Private Methods
     
     private func onSucess(heroResponse: HeroesResponse, isAdditional:Bool = false) {
-        self.heroes = heroResponse
         delegate?.heroFetchWithSucess(isAdditional: isAdditional)
     }
     

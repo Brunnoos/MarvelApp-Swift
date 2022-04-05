@@ -42,12 +42,30 @@ class HeroEventsViewController: UIViewController {
         return indicator
     }()
     
+    lazy var viewTitle: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.textColor = .white
+        return label
+    }()
+    
+    lazy var closeButton: UIButton = {
+        let button = UIButton(type: .close)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 20
+        button.addTarget(self, action: #selector(closeScene), for: .touchUpInside)
+        return button
+    }()
+    
     lazy var eventsListCollectionView: UICollectionView = {
         /// Setup Collection View Layout
         let collectionLayout = UICollectionViewFlowLayout()
         collectionLayout.scrollDirection = .horizontal
         
-        let itemHeight = view.frame.height * 0.8
+        let itemHeight = view.frame.height * 0.7
         let itemWidth = view.frame.width * 0.8
         collectionLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         
@@ -85,7 +103,7 @@ class HeroEventsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         viewModel?.delegate = self
         setupLayouts()
         
@@ -95,6 +113,10 @@ class HeroEventsViewController: UIViewController {
         state = .loading
         
         fetchEvents()
+    }
+    
+    @objc private func closeScene() {
+        dismiss(animated: true)
     }
     
     // MARK: - Private Setup Methods
@@ -149,6 +171,8 @@ class HeroEventsViewController: UIViewController {
     
     private func setupLayouts() {
         setupLoadingIndicatorLayout()
+        setupViewTitleLayout()
+        setupCloseButtonLayout()
         setupHeroListLayout()
         setupErrorImageLayout()
         setupErrorTextLayout()
@@ -165,11 +189,33 @@ class HeroEventsViewController: UIViewController {
         ])
     }
     
+    private func setupViewTitleLayout() {
+        view.addSubview(viewTitle)
+        
+        NSLayoutConstraint.activate([
+            viewTitle.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            viewTitle.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            viewTitle.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            viewTitle.heightAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+    
+    private func setupCloseButtonLayout() {
+        view.addSubview(closeButton)
+        
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            closeButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            closeButton.heightAnchor.constraint(equalToConstant: 40),
+            closeButton.widthAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+    
     private func setupHeroListLayout() {
         view.addSubview(eventsListCollectionView)
         
         NSLayoutConstraint.activate([
-            eventsListCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            eventsListCollectionView.topAnchor.constraint(equalTo: viewTitle.bottomAnchor, constant: -10),
             eventsListCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             eventsListCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             eventsListCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -199,6 +245,8 @@ class HeroEventsViewController: UIViewController {
     }
 }
 
+// MARK: - View Model Delegate
+
 extension HeroEventsViewController: HeroEventListViewModelDelegate {
     func eventsFetchWithSucess() {
         if let viewModel = viewModel,
@@ -216,6 +264,8 @@ extension HeroEventsViewController: HeroEventListViewModelDelegate {
         self.state = .error
     }
 }
+
+// MARK: - Collection Protocols
 
 extension HeroEventsViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
