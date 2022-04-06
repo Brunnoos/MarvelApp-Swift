@@ -126,6 +126,14 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		994705E427FD13FC00A63C8C /* HeroDetailsViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99E9536B27F87E62001C4B4E /* HeroDetailViewModel.swift */,
+			);
+			path = HeroDetailsViewModel;
+			sourceTree = "<group>";
+		};
 		9993F07E27F7AB7100AE5DBB = {
 			isa = PBXGroup;
 			children = (
@@ -221,8 +229,9 @@
 		9993F0B727F7B2C600AE5DBB /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				994705E427FD13FC00A63C8C /* HeroDetailsViewModel */,
 				99E9537C27F88E79001C4B4E /* EventsViewModels */,
-				99E9537B27F88E6F001C4B4E /* HeroViewModels */,
+				99E9537B27F88E6F001C4B4E /* HeroListViewModel */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -280,14 +289,13 @@
 			path = HeroEventsCells;
 			sourceTree = "<group>";
 		};
-		99E9537B27F88E6F001C4B4E /* HeroViewModels */ = {
+		99E9537B27F88E6F001C4B4E /* HeroListViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				9993F0B927F7B2F900AE5DBB /* HeroViewModelDelegate.swift */,
 				9993F0BB27F7B33A00AE5DBB /* HeroListViewModel.swift */,
-				99E9536B27F87E62001C4B4E /* HeroDetailViewModel.swift */,
 			);
-			path = HeroViewModels;
+			path = HeroListViewModel;
 			sourceTree = "<group>";
 		};
 		99E9537C27F88E79001C4B4E /* EventsViewModels */ = {

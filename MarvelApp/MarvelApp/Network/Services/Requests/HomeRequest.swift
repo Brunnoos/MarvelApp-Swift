@@ -21,9 +21,7 @@ enum HomeRequest: URLRequestProtocol {
         let timestamp = NSDate().timeIntervalSince1970.description
         
         switch self {
-        case .home:
-            return "ts=\(timestamp)&apikey=\(Environment.publicKey)&hash=\(hashMD5(timestamp: timestamp))"
-        case .details, .events:
+        case .home, .details, .events:
             return "ts=\(timestamp)&apikey=\(Environment.publicKey)&hash=\(hashMD5(timestamp: timestamp))"
         }
         
